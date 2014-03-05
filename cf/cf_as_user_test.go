@@ -19,6 +19,7 @@ var _ = Describe("CfAsUser", func() {
 		var session, _ = cmdtest.Start(exec.Command("echo", "nothing"))
 		return session
 	}
+	var user = cf.NewUser("FAKE_USERNAME", "FAKE_PASSWORD", "FAKE_ORG", "FAKE_SPACE")
 
 	BeforeEach(func() {
 		FakeCfCalls = [][]string{}
@@ -26,26 +27,26 @@ var _ = Describe("CfAsUser", func() {
 	})
 
 	It("calls cf login", func(){
-		cf.CfAsUser("uname", "passwd", FakeThingsToRunAsUser)
+		cf.CfAsUser(user, FakeThingsToRunAsUser)
 
-		Expect(FakeCfCalls[0]).To(Equal([]string{"login", "uname", "passwd"}))
+		Expect(FakeCfCalls[0]).To(Equal([]string{"login", "FAKE_USERNAME", "FAKE_PASSWORD"}))
 	})
 
 	It("calls the passed function", func(){
 		called := false
-		cf.CfAsUser("uname", "passwd", func() error{ called = true; return nil })
+		cf.CfAsUser(user, func() error{ called = true; return nil })
 
 		Ω(called).To(BeTrue())
 	})
 
 	It("calls cf login", func(){
-		cf.CfAsUser("_", "_", FakeThingsToRunAsUser)
+		cf.CfAsUser(user, FakeThingsToRunAsUser)
 
 		Expect(FakeCfCalls[1]).To(Equal([]string{"logout"}))
 	})
 
 	It("logs out even if there's an error", func(){
-		cf.CfAsUser("_", "_", func() error { return errors.New("_") })
+		cf.CfAsUser(user, func() error { return errors.New("_") })
 
 		Expect(FakeCfCalls[len(FakeCfCalls) - 1]).To(Equal([]string{"logout"}))
 	})
@@ -54,7 +55,7 @@ var _ = Describe("CfAsUser", func() {
 		It("returns the same error", func(){
 			myError := errors.New("fake error")
 
-			Expect(cf.CfAsUser("_", "_", func() error { return myError })).To(Equal(myError))
+			Expect(cf.CfAsUser(user, func() error { return myError })).To(Equal(myError))
 		})
 	})
 })
