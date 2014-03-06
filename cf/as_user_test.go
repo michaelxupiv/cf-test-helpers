@@ -26,33 +26,33 @@ var _ = Describe("AsUser", func() {
 		cf.Cf = FakeCf
 	})
 
-	It("calls cf login", func(){
+	It("calls cf login", func() {
 		cf.AsUser(user, FakeThingsToRunAsUser)
 
 		Expect(FakeCfCalls[0]).To(Equal([]string{"login", "FAKE_USERNAME", "FAKE_PASSWORD"}))
 	})
 
-	It("calls the passed function", func(){
+	It("calls the passed function", func() {
 		called := false
-		cf.AsUser(user, func() error{ called = true; return nil })
+		cf.AsUser(user, func() error { called = true; return nil })
 
 		Ω(called).To(BeTrue())
 	})
 
-	It("calls cf login", func(){
+	It("calls cf login", func() {
 		cf.AsUser(user, FakeThingsToRunAsUser)
 
 		Expect(FakeCfCalls[1]).To(Equal([]string{"logout"}))
 	})
 
-	It("logs out even if there's an error", func(){
+	It("logs out even if there's an error", func() {
 		cf.AsUser(user, func() error { return errors.New("_") })
 
-		Expect(FakeCfCalls[len(FakeCfCalls) - 1]).To(Equal([]string{"logout"}))
+		Expect(FakeCfCalls[len(FakeCfCalls)-1]).To(Equal([]string{"logout"}))
 	})
 
-	Context("when the passed function returns an error", func(){
-		It("returns the same error", func(){
+	Context("when the passed function returns an error", func() {
+		It("returns the same error", func() {
 			myError := errors.New("fake error")
 
 			Expect(cf.AsUser(user, func() error { return myError })).To(Equal(myError))

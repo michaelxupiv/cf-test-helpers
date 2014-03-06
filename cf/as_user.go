@@ -1,8 +1,8 @@
 package cf
 
 import (
-	. "github.com/vito/cmdtest/matchers"
 	. "github.com/onsi/gomega"
+	. "github.com/vito/cmdtest/matchers"
 )
 
 func AsUser(user User, actions func() error) error {
