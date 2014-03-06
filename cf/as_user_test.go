@@ -2,6 +2,7 @@ package cf_test
 
 import (
 	"errors"
+	"os"
 	"os/exec"
 
 	. "github.com/onsi/ginkgo"
@@ -57,5 +58,31 @@ var _ = Describe("AsUser", func() {
 
 			Expect(cf.AsUser(user, func() error { return myError })).To(Equal(myError))
 		})
+	})
+
+	It("sets a unique CF_HOME value", func() {
+		var (
+			firstHome string
+			secondHome string
+		)
+
+		cf.AsUser(user, func() error {
+			firstHome = os.Getenv("CF_HOME")
+			return nil
+		})
+
+		cf.AsUser(user, func() error {
+			secondHome = os.Getenv("CF_HOME")
+			return nil
+		})
+
+		Expect(firstHome).NotTo(Equal(secondHome))
+	})
+
+	It("returns CF_HOME to its original value", func() {
+		os.Setenv("CF_HOME", "some-crazy-value")
+		cf.AsUser(user, func() error { return nil })
+
+		Expect(os.Getenv("CF_HOME")).To(Equal("some-crazy-value"))
 	})
 })
