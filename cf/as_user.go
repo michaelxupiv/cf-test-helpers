@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func CfAsUser(user User, actions func() error) error {
+func AsUser(user User, actions func() error) error {
 	defer func() {
 		Expect(Cf("logout")).To(ExitWith(0))
 	}()

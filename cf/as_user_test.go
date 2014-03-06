@@ -10,7 +10,7 @@ import (
 	"github.com/vito/cmdtest"
 )
 
-var _ = Describe("CfAsUser", func() {
+var _ = Describe("AsUser", func() {
 	var FakeThingsToRunAsUser = func() error { return nil }
 	var FakeCfCalls = [][]string{}
 
@@ -27,26 +27,26 @@ var _ = Describe("CfAsUser", func() {
 	})
 
 	It("calls cf login", func(){
-		cf.CfAsUser(user, FakeThingsToRunAsUser)
+		cf.AsUser(user, FakeThingsToRunAsUser)
 
 		Expect(FakeCfCalls[0]).To(Equal([]string{"login", "FAKE_USERNAME", "FAKE_PASSWORD"}))
 	})
 
 	It("calls the passed function", func(){
 		called := false
-		cf.CfAsUser(user, func() error{ called = true; return nil })
+		cf.AsUser(user, func() error{ called = true; return nil })
 
 		Ω(called).To(BeTrue())
 	})
 
 	It("calls cf login", func(){
-		cf.CfAsUser(user, FakeThingsToRunAsUser)
+		cf.AsUser(user, FakeThingsToRunAsUser)
 
 		Expect(FakeCfCalls[1]).To(Equal([]string{"logout"}))
 	})
 
 	It("logs out even if there's an error", func(){
-		cf.CfAsUser(user, func() error { return errors.New("_") })
+		cf.AsUser(user, func() error { return errors.New("_") })
 
 		Expect(FakeCfCalls[len(FakeCfCalls) - 1]).To(Equal([]string{"logout"}))
 	})
@@ -55,7 +55,7 @@ var _ = Describe("CfAsUser", func() {
 		It("returns the same error", func(){
 			myError := errors.New("fake error")
 
-			Expect(cf.CfAsUser(user, func() error { return myError })).To(Equal(myError))
+			Expect(cf.AsUser(user, func() error { return myError })).To(Equal(myError))
 		})
 	})
 })
