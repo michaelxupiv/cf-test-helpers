@@ -39,7 +39,7 @@ var _ = Describe("AsUser", func() {
 		Ω(called).To(BeTrue())
 	})
 
-	It("calls cf login", func() {
+	It("calls cf logout", func() {
 		cf.AsUser(user, FakeThingsToRunAsUser)
 
 		Expect(FakeCfCalls[1]).To(Equal([]string{"logout"}))
